@@ -3,10 +3,10 @@
 #include <vector>
 #include <map>
 #include <fstream>
-
 using namespace std;
 
-void readFileFromStream(ifstream& stream, vector<int>& text1, vector<int>& text2, vector<int>& text3, vector<int>& text4, vector<int>& text5);
+void readFileFromStream(ifstream& stream, vector<int>& text1, vector<int>& text2, vector<int>& text3, 
+						vector<int>& text4, vector<int>& text5);
 vector<int> diff(vector<int>& ciphertext, vector<int>& plaintext);
 bool ptnCheck(vector<int>& difference);
 vector<int> keyExists(vector<int>& difference);
@@ -75,28 +75,30 @@ int main() {
 				}
 			}
 			cout << endl;
-			ifs.close();
 			exit(1);
 		}
-
 	}
+	ifs.close();
 
 
-	int len = 3;
-	string str[] = { "unconvertible ", "intuitiveness ", "hermeneutics ", "photocompose ", "miserabilia ", "faultlessly ", "awesomeness ", "attentional ", "dismissive ", "delimiting "
-					, "racecourse " , "directions " , "indelicacy " , "shorelines " , "combusting " , "successors " , "postilion " , "footfalls " , "pintsized " , "courtship "
-					, "aloneness " , "hearkened " , "protruded " , "proposes " , "memphis " , "rustics " , "between " , "repress " , "matures " , "pressed "
-					, "ferries " , "catcher " , "bursary " , "beheld " , "swoops " , "chuted " , "wobbly " , "myrtle " , "cadgy " , "irony " };
+	//known words in the second dictionary, with a space at the end,
+	//so they were hardcoded to save time. Ordered from the longest to smallest in 
+	//character count
+	string str[] = {"unconvertible ","intuitiveness ","hermeneutics ","photocompose ", 
+					"miserabilia ","faultlessly ","awesomeness ","attentional ", 
+					"dismissive ","delimiting ","racecourse " ,"directions ", 
+					"indelicacy ","shorelines " ,"combusting " ,"successors ", 
+					"postilion ","footfalls ","pintsized ","courtship ","aloneness ",
+					"hearkened ","protruded ","proposes ","memphis ","rustics ",
+					"between ","repress ","matures ","pressed ","ferries ", 
+					"catcher ","bursary ","beheld ","swoops ","chuted ","wobbly " ,
+					"myrtle ","cadgy ", "irony "};
 
-	int n = 40;
+	int len = 3,n = 40; // 3 words per permuatation out of all the 40 words in the
+						// second dictionary 
+
 	vector<vector<int>> possCipher;
 	diffCombos(str, "", n, len, possCipher);
-	/*for (size_t index = 0; index < stuff.size(); index++) {
-		for (size_t inner = 0; inner < stuff[index].size(); inner++) {
-			cout << char(stuff[index][inner]);
-		}
-		cout << endl;
-	}*/
 	int count = 0;
 	string answer;
 	string a = "";
@@ -108,31 +110,35 @@ int main() {
 			//might need to pass a size parameter on methods used to decrypt them
 			vector<int> temp = keyExists(asciiDiff);
 			if (temp.size() != 0) {
-				//count++;
-				//cout << "Found it" << endl;		
-				//exit(1);
-				/*for (size_t index = 0; index < temp.size(); index++) {
-					cout << temp[index] << " ";
-				}
-				cout << endl;*/
 				answer = decrypt(cipherText, temp, str);
-				if(correctCipher(answer, str)){
+				if (correctCipher(answer, str)) {
 					cout << answer << endl;
-				}				
-				//cout << answer << endl;
-				/*for (size_t index = 0; index < answer.size(); index++){
-					if (correctCipher(answer, index, str)) {
-						cout << answer[index];
-					}*/
+					exit(1);
+				}
+			}
+		}
+		else{
+			for(int i = 0; i < 40; i++){
+				vector<int> newWord = possCipher[index];
+				encode(newWord,str[i]);
+				asciiDiff = diff(cipherText, newWord);
+				vector<int> temp = keyExists(asciiDiff);
+				if (temp.size() != 0) {
+					answer = decrypt(cipherText, temp, str);
+					if (correctCipher(answer, str)) {
+						cout << answer << endl;
+						exit(1);
+					}
+				}
 			}
 		}
 	}
-	//cout << count << endl;
-	ifs.close();
+	cout << "PlainText Not found. Sorry Professor :(\n";
 	return 0;
 }
 
 void readFileFromStream(ifstream& stream, vector<int>& text1, vector<int>& text2, vector<int>& text3, vector<int>& text4, vector<int>& text5) {
+	void inputWordsFromStream(ifstream & ifs, vector<int>& push, char& moreWords, char& word);
 	char word, moreWords;
 	string w;
 	string plt;
@@ -140,74 +146,40 @@ void readFileFromStream(ifstream& stream, vector<int>& text1, vector<int>& text2
 	stream >> w >> w;
 	while (stream >> word) {
 		if (word == '1') {
-			stream >> word;
-			stream.get(moreWords);
-			stream.get(moreWords);
-			for (int i = 0; i < 48; i++) {
-				stream.get(moreWords);
-				if (moreWords == ' ') {
-					text1.push_back(int(96));
-				}
-				else
-					text1.push_back(int(moreWords));
-			}
+			inputWordsFromStream(stream, text1, moreWords, word);
 		}
 		else if (word == '2') {
-			stream >> word;
-			stream.get(moreWords);
-			stream.get(moreWords);
-			for (int i = 0; i < 48; i++) {
-				stream.get(moreWords);
-				if (moreWords == ' ') {
-					text2.push_back(int(96));
-				}
-				else
-					text2.push_back(int(moreWords));
-			}
+			inputWordsFromStream(stream, text2, moreWords, word);
 		}
 		else if (word == '3') {
-			stream >> word;
-			stream.get(moreWords);
-			stream.get(moreWords);
-			for (int i = 0; i < 48; i++) {
-				stream.get(moreWords);
-				if (moreWords == ' ') {
-					text3.push_back(int(96));
-				}
-				else
-					text3.push_back(int(moreWords));
-			}
+			inputWordsFromStream(stream, text3, moreWords, word);
 		}
 		else if (word == '4') {
-			stream >> word;
-			stream.get(moreWords);
-			stream.get(moreWords);
-			for (int i = 0; i < 48; i++) {
-				stream.get(moreWords);
-				if (moreWords == ' ') {
-					text4.push_back(int(96));
-				}
-				else
-					text4.push_back(int(moreWords));
-			}
+			inputWordsFromStream(stream, text4, moreWords, word);
 		}
 		else if (word == '5') {
-			stream >> word;
-			stream.get(moreWords);
-			stream.get(moreWords);
-			for (int i = 0; i < 48; i++) {
-				stream.get(moreWords);
-				if (moreWords == ' ') {
-					text5.push_back(int(96));
-				}
-				else
-					text5.push_back(int(moreWords));
-			}
+			inputWordsFromStream(stream, text5, moreWords, word);
 		}
 	}
 
 }
 
+void inputWordsFromStream(ifstream& ifs, vector<int>& push, char& moreWords, char& word) {
+	ifs>> word;
+	ifs.get(moreWords);
+	ifs.get(moreWords);
+	for (int i = 0; i < 48; i++) {
+		ifs.get(moreWords);
+		if (moreWords == ' ') {
+			push.push_back(int(96));
+		}
+		else
+			push.push_back(int(moreWords));
+	}
+}
+
+//Function that takes in the vector representation of the cipher and plain texts
+//and returns the a vector connainty the ascii diff between them.
 vector<int> diff(vector<int>& ciphertext, vector<int>& plaintext) {
 	vector<int> asciiDiff2;
 	for (size_t i = 0; i < plaintext.size(); i++) {
@@ -271,7 +243,6 @@ vector<int> keyExists(vector<int>& difference) {
 			break;
 		}
 		else {
-			//cout << curr << endl;
 			curr = beginCycle;
 		}
 	}
@@ -346,17 +317,14 @@ bool correctCipher(string& answer, string str[]) {
 	for(size_t i = 0; i < answer.size(); i++){
 		if(answer[i] == ' '){
 			word += answer[i];
-			//cout << word << endl;
 			if (find(str, str + 40, word) == (str + 40)) {
-				//cout << "HELLO" << endl;
 				found = false;
 				break;//its noti a valid cipher
 			}
 			word = "";
 		}
-		else{
+		else
 			word += answer[i];
-		}
 	}
 	return found;
 }
