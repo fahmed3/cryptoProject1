@@ -187,7 +187,7 @@ void inputWordsFromStream(ifstream& ifs, vector<int>& push, char& moreWords, cha
 }
 
 //Function that takes in the vector representation of the cipher and plain texts
-//and returns the a vector containing the ascii diff between them.
+//and returns the vector containing the ascii diff between them.
 vector<int> diff(vector<int>& ciphertext, vector<int>& plaintext) {
 	vector<int> asciiDiff2;
 	for (size_t i = 0; i < plaintext.size(); i++) {
