@@ -56,7 +56,7 @@ int main() {
 	//test one. if it is, it then attemps to output what ciphertext
 	//it is
 	int crtPlt;
-	for (int i = 0; i < 5; i++) {
+	for (size_t i = 0; i < vectorPlaintexts.size(); i++) {
 		//gets the ASCII difference between each plaintext and the ciphertext
 		asciiDiff = diff(cipherText, vectorPlaintexts[i]);
 		if (ptnCheck(asciiDiff)) { //if a pattern exists its Test One
